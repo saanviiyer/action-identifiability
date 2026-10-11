@@ -1,0 +1,31 @@
+{
+  "split": "released seed-0 protein-grouped 75/25 split",
+  "n_test_transitions": 7722,
+  "n_test_proteins": 19,
+  "bootstrap": "10000 held-out-protein cluster resamples; fixed predictions",
+  "point_estimates": {
+    "model_top1": 0.0754985754985755,
+    "lookup_top1": 0.06617456617456617,
+    "model_top5": 0.19645169645169644,
+    "lookup_top5": 0.16925666925666927
+  },
+  "paired_differences": {
+    "delta_top1": {
+      "point": 0.009324009324009327,
+      "protein_bootstrap_95pct_interval": [
+        0.007088958785515459,
+        0.012651876632139798
+      ],
+      "bootstrap_probability_gt_0": 1.0
+    },
+    "delta_top5": {
+      "point": 0.02719502719502717,
+      "protein_bootstrap_95pct_interval": [
+        0.021334134615384637,
+        0.03680754384848676
+      ],
+      "bootstrap_probability_gt_0": 1.0
+    }
+  },
+  "interpretation": "The unit of uncertainty is the held-out protein. A positive point estimate is not treated as established if its paired interval includes zero."
+}

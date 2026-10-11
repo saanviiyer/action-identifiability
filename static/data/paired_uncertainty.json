@@ -1,0 +1,50 @@
+{
+  "signature_minus_random": {
+    "n_paired_seeds": 5,
+    "mean_difference": 0.05188,
+    "bootstrap_95_interval": [
+      0.047720000000000005,
+      0.05734
+    ],
+    "one_sided_exact_randomization_p": 0.03125,
+    "paired_differences": [
+      0.048299999999999996,
+      0.062099999999999995,
+      0.046700000000000005,
+      0.0537,
+      0.048600000000000004
+    ]
+  },
+  "signature_minus_comp_matched": {
+    "n_paired_seeds": 5,
+    "mean_difference": -0.00272,
+    "bootstrap_95_interval": [
+      -0.0063,
+      0.0011999999999999984
+    ],
+    "one_sided_exact_randomization_p": 0.875,
+    "paired_differences": [
+      -0.003500000000000003,
+      0.0040999999999999925,
+      -0.00019999999999999185,
+      -0.007900000000000004,
+      -0.006099999999999994
+    ]
+  },
+  "comp_matched_minus_random": {
+    "n_paired_seeds": 5,
+    "mean_difference": 0.0546,
+    "bootstrap_95_interval": [
+      0.0501,
+      0.05884
+    ],
+    "one_sided_exact_randomization_p": 0.03125,
+    "paired_differences": [
+      0.0518,
+      0.058,
+      0.0469,
+      0.0616,
+      0.0547
+    ]
+  }
+}

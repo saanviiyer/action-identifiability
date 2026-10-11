@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Action Identifiability in Protein-Design Agents</title>
+<meta name="description" content="A protein-design agent can only choose between actions its scorer keeps apart. We measure whether ESM-2 does, using 78 COSMIC mutational signatures as a controlled action space.">
+
+<meta property="og:title" content="Action Identifiability in Protein-Design Agents">
+<meta property="og:description" content="ESM-2 compresses 78 biologically distinct mutational processes by 120×. Matched controls remove the apparent optimization gain, and the policy names the right action 7.55% of the time.">
+<meta property="og:image" content="https://saanviiyer.github.io/action-identifiability/static/images/poster.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/css/index.css">
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<div class="hero">
+  <div class="wrap">
+    <h1>Action Identifiability in<br>Protein-Design Agents</h1>
+
+    <p class="authors">
+      Saanvi S. Subramanian<sup>1</sup>&nbsp;&nbsp;&nbsp;Gabriela Lobinska<sup>2</sup>
+    </p>
+    <p class="affil"><sup>1</sup>California Institute of Technology&nbsp;&nbsp;&nbsp;<sup>2</sup>AITHYRA</p>
+
+    <div class="venue">MoML 2026 &middot; MIT</div>
+
+    <div class="buttons">
+      <a class="btn" href="static/pdfs/action-identifiability-moml2026.pdf">
+        <svg viewBox="0 0 384 512"><path d="M320 464c8.8 0 16-7.2 16-16V160H256c-17.7 0-32-14.3-32-32V48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H320zM0 64C0 28.7 28.7 0 64 0H229.5c17 0 33.3 6.7 45.3 18.7l90.5 90.5c12 12 18.7 28.3 18.7 45.3V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64z"/></svg>
+        Paper
+      </a>
+      <a class="btn" href="static/images/poster.png">
+        <svg viewBox="0 0 512 512"><path d="M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM323.8 202.5c-4.5-6.6-11.9-10.5-19.8-10.5s-15.4 3.9-19.8 10.5l-87 127.6L170.7 297c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h96 32H424c8.9 0 17.1-4.9 21.2-12.8s3.6-17.4-1.4-24.7l-120-176zM112 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"/></svg>
+        Poster
+      </a>
+      <a class="btn" href="https://github.com/saanviiyer/action-identifiability">
+        <svg viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8z"/></svg>
+        Code
+      </a>
+      <a class="btn" href="#results">
+        <svg viewBox="0 0 512 512"><path d="M32 32c17.7 0 32 14.3 32 32V400c0 8.8 7.2 16 16 16H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H80c-44.2 0-80-35.8-80-80V64C0 46.3 14.3 32 32 32zM160 224c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32s-32-14.3-32-32V256c0-17.7 14.3-32 32-32zm128-64V320c0 17.7-14.3 32-32 32s-32-14.3-32-32V160c0-17.7 14.3-32 32-32s32 14.3 32 32zm64 32c17.7 0 32 14.3 32 32v96c0 17.7-14.3 32-32 32s-32-14.3-32-32V224c0-17.7 14.3-32 32-32zM480 96V320c0 17.7-14.3 32-32 32s-32-14.3-32-32V96c0-17.7 14.3-32 32-32s32 14.3 32 32z"/></svg>
+        Results
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== THE QUESTION ===================== -->
+<section>
+  <div class="wrap">
+    <h2>The question</h2>
+    <h3>How can we ensure agents make well-reasoned decisions in protein design?</h3>
+
+    <p class="lede">A closed-loop molecular agent proposes an intervention, scores the resulting
+    molecule, and uses the score to choose what to do next. The loop only works if the scorer can
+    tell the available interventions apart. If several distinct actions produce
+    indistinguishable scored outcomes, the agent cannot know which one caused a result &mdash;
+    and any mechanism it reports afterwards is a guess dressed as an inference.</p>
+
+    <div class="defcard">
+      <span class="term">Action identifiability</span>
+      <p>The ability to distinguish the outcomes of competing actions using the agent's own
+      scoring model.</p>
+    </div>
+
+    <p>Identifiability is not the same as biological admissibility. An action can represent a
+    perfectly valid biological process while the scorer quietly discards everything that
+    distinguishes it from the others. <b>Before selecting molecular interventions, agents should
+    establish action identifiability by verifying that their scoring model can separate the
+    actions available to them.</b></p>
+  </div>
+</section>
+
+<!-- ===================== TESTBED ===================== -->
+<section class="tinted">
+  <div class="wrap">
+    <h2>The testbed</h2>
+    <h3>78 COSMIC mutational signatures as a controlled action space</h3>
+
+    <p>We need an action space where the ground-truth distinctions are known independently of any
+    learned model. COSMIC single-base-substitution signatures give us exactly that: each signature
+    is a distribution over 96 trinucleotide substitution types, catalogued from real mutational
+    processes, with its own model-free parameterization.</p>
+
+    <p>The loop runs as follows. An action is a signature <i>s</i>. Executing it on a coding
+    sequence samples compatible substitutions and produces a mutant, which we translate, embed
+    with ESM-2, and score by cosine distance to a target Pfam-domain centroid &mdash; lower is
+    better. This gives us both halves of the comparison: how far apart two actions are
+    <i>as processes</i>, and how far apart their outcomes are <i>after scoring</i>.</p>
+
+    <div class="stats">
+      <div class="stat"><span class="n">78</span><span class="l">COSMIC signatures as the nominal action space</span></div>
+      <div class="stat"><span class="n">3,003</span><span class="l">action pairs compared before and after scoring</span></div>
+      <div class="stat"><span class="n">35,403</span><span class="l">realized Pfam-domain transitions for the policy</span></div>
+      <div class="stat"><span class="n">5</span><span class="l">matched controls separating steering from composition</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESULTS ===================== -->
+<section id="results">
+  <div class="wrap">
+    <h2>What we found</h2>
+
+    <ol class="findings">
+      <li><b>ESM-2 compresses the action space by 120&times;.</b> Pairs of signatures that are
+      far apart as processes land on top of each other once scored.</li>
+      <li><b>Substitution composition explains the apparent optimization gain.</b> A control that
+      keeps only the amino-acid composition matches the structured action exactly.</li>
+      <li><b>The policy cannot name the action.</b> 7.55% top-1 accuracy, and conformal coverage
+      only arrives by returning most of the catalogue.</li>
+      <li><b>Adaptive selection does not beat fixed or random under equal budget.</b> Evaluating
+      more candidates does not help when feedback carries too little information.</li>
+      <li><b>An independent model finds nothing was built.</b> Zero sequences pass Pfam's
+      curated threshold for the target domain.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ----- Finding 1 ----- -->
+<section>
+  <div class="wrap">
+    <h2>Finding 1</h2>
+    <h3>ESM-2 compresses distinct mutational processes by 120&times;</h3>
+
+    <p>Across all 3,003 pairs of COSMIC signatures, the median distance between native 96-channel
+    spectra is <b>0.815</b>. The median distance between the same actions' ESM-2 outcome regions
+    is <b>0.0068</b>. The scored action space is roughly two orders of magnitude tighter than the
+    space the actions actually live in.</p>
+
+    <div class="callout">
+      <p><b>1,780 of 3,003 pairs (59.3%)</b> are more than 0.5 apart in COSMIC space but fall
+      within 0.011 of each other after scoring. SBS1 and SBS7a &mdash; clock-like ageing and UV
+      exposure, about as biologically distinct as two processes get &mdash; are 0.952 apart as
+      spectra and 0.0055 apart as outcomes.</p>
+    </div>
+
+    <figure>
+      <img src="static/images/action_space_vs_scorer.png" alt="Scatter plot of 3,003 COSMIC signature pairs. The x-axis is distance between actions as processes in COSMIC 96-channel space; the y-axis is distance between their destinations in ESM-2 space on a log scale. Most points fall below the 0.011 collapse bar regardless of how far apart they are in COSMIC space.">
+      <figcaption><b>Figure 1. The scorer, not the catalogue, is doing the collapsing.</b>
+      Each point is one of 3,003 action pairs. Points far to the right are processes the
+      catalogue holds far apart; points below the dashed bar are pairs whose scored outcomes are
+      indistinguishable. The lower-right region is densely populated, which is the finding: wide
+      biological separation survives into the scorer only weakly.</figcaption>
+    </figure>
+
+    <p>A composition-matched control pins down why. Scrambling trinucleotide context and mutation
+    placement while preserving the realized substitution composition reproduces each action's
+    ESM-2 destination to within cosine distance 0.02. Actions with similar broad substitution
+    patterns collapse together, and the same pattern appears at both ESM-2 8M and 650M. The agent
+    has 78 nominal actions and a far coarser effective action space underneath.</p>
+  </div>
+</section>
+
+<!-- ----- Finding 2 + 4 ----- -->
+<section class="tinted">
+  <div class="wrap">
+    <h2>Findings 2 and 4</h2>
+    <h3>Matched controls remove the apparent optimization gain</h3>
+
+    <p>On the PF17041 target, the structured action looks like it works. It reduces ESM-2 distance
+    by 0.0736 &plusmn; 0.0030 across five seeds, against 0.0218 &plusmn; 0.0051 for
+    edit-count-matched random mutation &mdash; an improvement of 0.0519, 95% CI
+    [0.0477, 0.0573]. That is the result a design paper would report.</p>
+
+    <p>Then composition matching erases it. Reapplying the same amino-acid substitution multiset
+    at random positions produces <b>0.0764</b>, against <b>0.0736</b> for the structured action.</p>
+
+    <table>
+      <thead><tr><th>Proposal arm</th><th class="num">Target improvement</th><th>What it preserves</th></tr></thead>
+      <tbody>
+        <tr class="best"><td>Composition-matched control</td><td class="num">0.0764</td><td>Substitution composition only</td></tr>
+        <tr><td>Structured COSMIC action</td><td class="num">0.0736</td><td>Composition, context, and placement</td></tr>
+        <tr><td>Edit-count-matched random</td><td class="num">0.0218</td><td>Edit count only</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <p>The paired difference between the structured action and its composition-matched control
+      is <b>&minus;0.0027</b>, 95% CI <b>[&minus;0.0063, 0.0012]</b>. We find no evidence that
+      trinucleotide context or mutation placement &mdash; the things that actually define a
+      mutational signature &mdash; add steering power beyond the substitution composition ESM-2
+      already preserves.</p>
+    </div>
+
+    <p>Scorer feedback adds nothing either. An <i>unselected drift</i> control scores every
+    proposal and then accepts it regardless of the score. It improves target distance by
+    <b>0.0737</b>, against <b>0.0736</b> under Metropolis selection. The same holds for the random
+    arm: 0.0236 unselected against 0.0218 selected. Whatever the loop is getting, it is getting
+    from the proposal distribution, not from the feedback.</p>
+
+    <figure>
+      <img src="static/images/controls_and_budget.png" alt="Two panels. Left: paired seed-level improvements for structured, composition-matched, and random arms, with the structured and composition-matched means overlapping and both above random. Right: mean final distance to target against ESM-2 scorer call budget for fixed, random, and adaptive lookahead policies, with adaptive remaining above the others at every budget.">
+      <figcaption><b>Figure 2. Matched controls and matched compute.</b>
+      <b>(a)</b> Each point is one paired seed; horizontal bars are means. The structured arm does
+      not outperform composition-matched mutation, while both outperform edit-count-matched
+      random mutation. <b>(b)</b> Under equal ESM-2 scorer-call budgets, five-action adaptive
+      lookahead stays farther from the target than fixed or random selection. The budget
+      experiment spans 60 trajectories per budget across four targets, five proteins, and three
+      seeds.</figcaption>
+    </figure>
+
+    <h3 style="margin-top:40px">Adaptive action selection does not improve optimization</h3>
+
+    <p>Giving the agent more candidates to evaluate does not rescue it. At a budget of 100 ESM-2
+    scorer calls, five-action one-step lookahead reaches a mean target distance of 0.177, which is
+    worse than both baselines.</p>
+
+    <table>
+      <thead><tr><th>Policy at 100 scorer calls</th><th class="num">Mean distance to target</th></tr></thead>
+      <tbody>
+        <tr class="best"><td>Fixed action</td><td class="num">0.165</td></tr>
+        <tr><td>Random action selection</td><td class="num">0.173</td></tr>
+        <tr><td>Adaptive five-action lookahead</td><td class="num">0.177</td></tr>
+      </tbody>
+    </table>
+
+    <p>Adaptive is worse than the fixed policy by <b>+0.0113</b>, 95% CI [+0.0082, +0.0143], and
+    worse than random by +0.0042, 95% CI [+0.0021, +0.0057]. Lookahead spends scorer calls on
+    comparisons the scorer cannot resolve, and pays for them in lost transitions.
+    <b>Evaluating more candidate actions does not improve optimization when the feedback carries
+    too little usable information.</b></p>
+  </div>
+</section>
+
+<!-- ----- Finding 3 ----- -->
+<section>
+  <div class="wrap">
+    <h2>Finding 3</h2>
+    <h3>Agents cannot reliably identify the correct action</h3>
+
+    <p>We trained a supervised policy on 35,403 realized Pfam-domain transitions to predict which
+    of the 78 COSMIC signatures produced a given transition. On a protein-grouped split it reaches
+    <b>7.55%</b> top-1 accuracy, against 6.12% for a nearest-neighbor baseline and 1.28% for
+    uniform chance. Measured against a train-only per-(origin, target) frequency lookup, the
+    policy's edge is +0.93 percentage points, 95% CI [+0.71, +1.27].</p>
+
+    <p>So the policy does carry real information about action choice &mdash; and it still predicts
+    the wrong action in <b>92.45%</b> of held-out cases. It also fails to generalize: holding out
+    complete COSMIC processes drops top-1 to 0.8%, <i>below</i> the 1.3% uniform baseline, and
+    holding out SBS17a yields 0% recovery. The model interpolates among action classes it saw
+    during training rather than learning what a signature is.</p>
+
+    <figure>
+      <img src="static/images/action_uncertainty.png" alt="Two panels. Left: mean returned set size against true-action coverage for ESM-2 neighborhood and adaptive prediction sets, both rising steeply so that high coverage requires returning most of the catalogue. Right: conditional accuracy against the fraction of cases acted on under validation-frozen abstention thresholds.">
+      <figcaption><b>Figure 3. Uncertainty-aware interfaces do not recover a specific useful action.</b>
+      <b>(a)</b> Direct ESM-2 neighborhoods and adaptive prediction sets (APS) raise true-action
+      coverage only by returning much of the 78-action catalogue; the dashed line marks 90%
+      coverage. <b>(b)</b> Validation-frozen abstention thresholds improve conditional accuracy
+      only by acting on fewer cases. The point at 100% coverage is the unfiltered
+      policy.</figcaption>
+    </figure>
+
+    <div class="callout">
+      <p>Set-valued prediction buys coverage by giving up specificity. Adaptive prediction sets
+      reach <b>92.2% coverage</b> but return <b>66.8 of 78 actions</b> on average, with a median
+      set size of 78 &mdash; the entire catalogue. A direct ESM-2 neighborhood reaches 82.6%
+      coverage at a mean set size of 58.2. Abstention produces smaller outputs, but retaining
+      8.6% of test cases still yields only 33.0% conditional accuracy.</p>
+    </div>
+
+    <p>This is what a non-identifiable action space looks like from the inside. The honest
+    uncertainty quantification is not wrong &mdash; it is correctly reporting that the evidence
+    does not single out an action.</p>
+  </div>
+</section>
+
+<!-- ----- Finding 5 ----- -->
+<section class="tinted">
+  <div class="wrap">
+    <h2>Finding 5</h2>
+    <h3>Improving ESM-2 scores does not establish target-domain acquisition</h3>
+
+    <p>The optimization moves proteins measurably closer to the PF17041 centroid. The obvious
+    question is whether that means anything biologically. We checked with a model that shares
+    nothing with the objective: an independent Pfam profile hidden Markov model, evaluated with
+    HMMER 3 against the PF17041.11 SasG E profile.</p>
+
+    <div class="callout">
+      <p><b>Zero</b> evaluated sequences passed Pfam's curated gathering threshold. Under a
+      permissive reporting threshold, none of the five structured-action sequences produces a
+      match at all; other arms produce only weak, non-significant hits, with best
+      <i>E</i> = 0.34.</p>
+    </div>
+
+    <p>The evidence supports movement under the ESM-2 objective. It does not support acquisition
+    of PF17041-like sequence properties. These are different claims, and only the first one is
+    measured by the thing the agent optimizes.</p>
+  </div>
+</section>
+
+<!-- ===================== PAPER / CODE / RESULTS ===================== -->
+<section id="artifacts">
+  <div class="wrap">
+    <h2>Paper, code, and results</h2>
+    <h3>Everything behind the numbers on this page</h3>
+
+    <div class="cards">
+      <a class="card" href="static/pdfs/action-identifiability-moml2026.pdf">
+        <div class="thumb"><img src="static/images/paper-thumb-1.png" alt="First page of the paper"></div>
+        <div class="body">
+          <h4>Paper</h4>
+          <p>Five pages plus appendix, with full methods, bootstrap procedures, and the matched-control definitions.</p>
+          <span class="go">Read the PDF &rarr;</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://github.com/saanviiyer/action-identifiability">
+        <div class="thumb"><pre>action_space_vs_scorer.py
+cross_signature_steering.py
+prism_proto_design.py
+proto_ablation.py
+inverse_design_classifier.py
+equivalence_class_policy.py
+selective_action_interface.py
+adaptive_policy_multibudget.py
+validate_designs_hmmer.py</pre></div>
+        <div class="body">
+          <h4>Code</h4>
+          <p>Nine scripts covering the action-space analysis, the optimization loop, every matched control, and the external validation.</p>
+          <span class="go">Browse the repo &rarr;</span>
+        </div>
+      </a>
+
+      <a class="card" href="#data">
+        <div class="thumb"><img src="static/images/poster.png" alt="The MoML 2026 poster"></div>
+        <div class="body">
+          <h4>Results</h4>
+          <p>Seed-level CSVs, paired bootstrap intervals, and the poster as presented at MoML 2026.</p>
+          <span class="go">See the data files &rarr;</span>
+        </div>
+      </a>
+    </div>
+
+    <h3 style="margin-top:46px">What each script does</h3>
+    <div class="files">
+      <div><code>action_space_vs_scorer.py</code><span class="what">All 78 actions in both spaces: COSMIC 96-channel vs ESM-2 destination</span></div>
+      <div><code>cross_signature_steering.py</code><span class="what">Applies COSMIC actions to proteins, measures mean ESM-2 region reached</span></div>
+      <div><code>prism_proto_design.py</code><span class="what">The Metropolis optimization loop at T = 0.02</span></div>
+      <div><code>proto_ablation.py</code><span class="what">Composition-matched, edit-count-matched, and unselected-drift arms</span></div>
+      <div><code>inverse_design_classifier.py</code><span class="what">The supervised policy and its leave-actions-out variants</span></div>
+      <div><code>equivalence_class_policy.py</code><span class="what">ESM-2 neighborhood sets and the transitive-closure analysis</span></div>
+      <div><code>selective_action_interface.py</code><span class="what">Conformal prediction sets and frozen abstention thresholds</span></div>
+      <div><code>adaptive_policy_multibudget.py</code><span class="what">Lookahead vs fixed vs random at 25, 50, and 100 scorer calls</span></div>
+      <div><code>validate_designs_hmmer.py</code><span class="what">Independent PF17041 profile-HMM validation</span></div>
+    </div>
+
+    <h3 style="margin-top:46px">The question the analysis was built to settle</h3>
+    <pre class="code"><span class="c">"""Is the action space degenerate, or does the scorer collapse it?
+
+Three biochemically distinct actions (SBS1, SBS7a, SBS2) drive proteins to nearly
+one destination in ESM-2 space. That has a confound four signatures cannot settle:
+the actions might genuinely be similar, or the SCORER might be unable to resolve
+differences that exist.
+
+This settles it by measuring all 78 actions in BOTH spaces:
+
+  native space : the COSMIC 96-channel trinucleotide substitution profile, which is
+                 the action's own parameterization, independent of any learned model
+  scorer space : the mean final-layer ESM-2 position its mutants reach
+
+If the catalogue is well separated natively and compressed in scorer space, the
+collapse belongs to the scorer.
+"""</span>
+<span class="c"># action_space_vs_scorer.py</span>
+COLLAPSE_BAR = <span class="s">0.011</span>   <span class="c"># the draft's own collapse criterion, in scorer space</span></pre>
+
+    <h3 id="data" style="margin-top:46px">Result files</h3>
+    <div class="files">
+      <div><a href="static/data/all_seeds_summary.csv"><code>all_seeds_summary.csv</code></a><span class="what">Per-seed improvement, accept rate, and length control for all three arms</span></div>
+      <div><a href="static/data/paired_uncertainty.json"><code>paired_uncertainty.json</code></a><span class="what">Paired bootstrap intervals and exact randomization p-values</span></div>
+      <div><a href="static/data/summary.json"><code>summary.json</code></a><span class="what">Policy top-1 and top-5 against baselines, with protein-cluster bootstrap</span></div>
+      <div><a href="static/data/agent_results.csv"><code>agent_results.csv</code></a><span class="what">Per-protein, per-goal budget trajectories across four Pfam targets</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TAKEAWAYS ===================== -->
+<section class="tinted">
+  <div class="wrap">
+    <h2>What it adds up to</h2>
+
+    <div class="takeaways">
+      <div class="tk">
+        <h4>Distinct actions become indistinguishable</h4>
+        <p>Biological grounding does not guarantee scorer-level identifiability. COSMIC describes
+        genuinely distinct processes; ESM-2 maps many of their outcomes to nearly the same place.</p>
+      </div>
+      <div class="tk">
+        <h4>Agency does not overcome poor resolution</h4>
+        <p>Adaptive selection, lookahead, and uncertainty quantification cannot recover a
+        distinction the scorer has already thrown away.</p>
+      </div>
+      <div class="tk">
+        <h4>Optimization requires independent validation</h4>
+        <p>Movement under an objective is not acquisition of the property the objective stands in
+        for. A model that shares nothing with the objective has to say so.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:44px">A three-step evaluation we would like to see become standard</h3>
+    <ol class="recipe">
+      <li><b>Measure whether the scorer distinguishes the actions available to the policy.</b>
+      Compare distances in the action's own parameterization against distances between scored
+      outcomes. This is cheap and it is diagnostic.</li>
+      <li><b>Compare optimization against controls matched for proposal distribution, edit count,
+      sequence length, and scorer-call budget.</b> Each of these matched controls removed a
+      result we would otherwise have reported.</li>
+      <li><b>Validate the molecular claim with a measurement independent of the optimization
+      objective.</b> If the objective and the check share a representation, passing the check is
+      not evidence.</li>
+    </ol>
+
+    <p style="margin-top:28px">If the scorer cannot resolve competing actions, the right behavior
+    is to return a useful uncertainty set or abstain &mdash; not to name a mechanism.</p>
+
+    <p class="limits"><b>Scope.</b> These conclusions apply to the action&ndash;scorer pair studied
+    here. Other molecular actions or scorers may preserve more mechanistic information, and the
+    point of the three-step recipe is that this is a measurable question rather than an assumption.
+    Methods that steer protein representations are also dual-use, so we restrict the action space
+    to characterized processes and focus on auditing failure modes rather than claiming successful
+    molecular design.</p>
+  </div>
+</section>
+
+<!-- ===================== BIBTEX ===================== -->
+<section>
+  <div class="wrap">
+    <h2>Citation</h2>
+    <div class="bibtex">@inproceedings{subramanian2026action,
+  title     = {Action Identifiability in Protein-Design Agents},
+  author    = {Subramanian, Saanvi S. and Lobinska, Gabriela},
+  booktitle = {Workshop on Machine Learning for Molecules (MoML)},
+  year      = {2026}
+}</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Saanvi S. Subramanian &middot; California Institute of Technology &middot;
+    <a href="mailto:ssubramanian@caltech.edu">ssubramanian@caltech.edu</a></p>
+    <p style="margin-bottom:0">Page source on
+    <a href="https://github.com/saanviiyer/action-identifiability">GitHub</a>.
+    Layout follows the academic project page convention.</p>
+  </div>
+</footer>
+
+</body>
+</html>
