@@ -1,10 +1,13 @@
 # Action Identifiability in Protein-Design Agents
 
-Project page for the MoML 2026 (MIT) poster and paper.
+> **This repository serves a redirect. Do not delete it.**
+> The URL `https://saanviiyer.github.io/action-identifiability/` is printed as a QR code on
+> the MoML 2026 poster, so it has to keep resolving indefinitely.
 
-**Live page:** https://saanviiyer.github.io/action-identifiability/
+**Project page (canonical):** https://saanviiyer.github.io/pages/projects/action-identifiability/
 
 Saanvi S. Subramanian (Caltech) · Gabriela Lobinska (AITHYRA)
+MoML 2026 (MIT) · AgenticLS @ NeurIPS 2026
 
 ---
 
@@ -30,29 +33,31 @@ It does not hold.
 | Adaptive lookahead vs fixed, at 100 scorer calls | +0.0113 worse, 95% CI [+0.0082, +0.0143] |
 | Sequences passing Pfam's curated threshold for PF17041 | 0 |
 
-## Repository layout
+## What is in here
 
 ```
-index.html                 the project page
-static/css/index.css       styling (palette matched to the poster)
-static/images/             paper figures, poster, paper thumbnail
+index.html                 redirect to the canonical project page
+static/images/             paper figures, poster
 static/pdfs/               the paper
 static/data/               seed-level results and bootstrap intervals
 ```
 
-## Result files
+The figures and prose now live on the canonical page in the main site repository
+(`saanviiyer.github.io`, at `pages/proj-action-identifiability.html`). The files below stay
+mirrored here because they were linked from this URL before the move.
 
 | File | Contents |
 | --- | --- |
+| `static/pdfs/action-identifiability-moml2026.pdf` | The paper |
+| `static/images/poster.png` | The MoML 2026 poster |
 | `static/data/all_seeds_summary.csv` | Per-seed improvement, accept rate, and length control for the structured, composition-matched, and random arms |
-| `static/data/paired_uncertainty.json` | Paired bootstrap intervals and exact randomization p-values for the three arm comparisons |
+| `static/data/paired_uncertainty.json` | Paired bootstrap intervals and exact randomization p-values |
 | `static/data/summary.json` | Policy top-1/top-5 against baselines with protein-cluster bootstrap |
 | `static/data/agent_results.csv` | Per-protein, per-goal budget trajectories across four Pfam targets |
 
 ## Analysis code
 
-The nine scripts behind the paper live in the research repository. Each one maps to a
-section:
+The nine scripts behind the paper, each mapping to a section:
 
 | Script | Section |
 | --- | --- |
@@ -66,21 +71,15 @@ section:
 | `adaptive_policy_multibudget.py` | Lookahead vs fixed vs random at 25/50/100 scorer calls |
 | `validate_designs_hmmer.py` | Independent PF17041 profile-HMM validation |
 
-## Local preview
-
-```bash
-python3 -m http.server 8000
-```
-
-Then open http://localhost:8000.
-
 ## Citation
 
 ```bibtex
 @inproceedings{subramanian2026action,
+  author    = {Saanvi S. Subramanian and Gabriela Lobinska},
   title     = {Action Identifiability in Protein-Design Agents},
-  author    = {Subramanian, Saanvi S. and Lobinska, Gabriela},
-  booktitle = {Workshop on Machine Learning for Molecules (MoML)},
-  year      = {2026}
+  booktitle = {Workshop on Machine Learning for Molecules (MoML);
+               NeurIPS Agentic Life Sciences Workshop (AgenticLS)},
+  year      = {2026},
+  url       = {https://saanviiyer.github.io/pages/projects/action-identifiability/}
 }
 ```
