@@ -33,7 +33,8 @@
   .aid table.auditab { width: 100%; border-collapse: collapse; margin: 18px 0 6px; font-size: 0.95rem; }
   .aid table.auditab th, .aid table.auditab td { text-align: left; padding: 10px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
   .aid table.auditab th { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.02em; color: var(--red); }
-  .aid table.auditab td:first-child { font-weight: 600; white-space: nowrap; }
+  .aid table.auditab td:first-child { font-weight: 600; }
+  @media (max-width: 620px) { .aid table.auditab, .aid table.auditab thead, .aid table.auditab tbody, .aid table.auditab tr, .aid table.auditab th, .aid table.auditab td { display: block; } .aid table.auditab thead { display: none; } .aid table.auditab td { border-bottom: none; padding: 2px 0; } .aid table.auditab tr { padding: 12px 0; border-bottom: 0.5px solid var(--border); } .aid table.auditab td:first-child { color: var(--red); margin-bottom: 2px; } }
 </style>
 </head>
 <body>
