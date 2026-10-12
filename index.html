@@ -84,27 +84,33 @@
 
   <div class="pp-abstract">
     <div class="pp-ab-label">Abstract</div>
-    <p>molecular design agents choose interventions by scoring predicted outcomes, which requires the scorer to distinguish the available actions. this joint report tests that requirement, then generalizes it. using 78 COSMIC mutational processes as actions and distance in ESM-2 space as the score, median pairwise distance falls from 0.815 in COSMIC spectrum space to 0.0068 between ESM-2 outcome regions, a 120x compression, and a composition-matched control reproduces the destinations. a learned policy identifies the true action in only 7.55% of held-out cases, split-conformal prediction reaches 92.2% coverage only by returning 66.8 of 78 actions, and an independent Pfam profile HMM finds no PF17041 hits at the curated threshold. a five-category audit battery, built for the WiML submission on homology-free function prediction, separates a reproducible embedding effect from the mechanistic claim attached to it. the same discipline exposes the proxy, benchmark, and verifier a design agent delegates to: a zero-shot score that ranks below counting, a benchmark correlation that stops predicting selection, and a trust gate that certifies a scorer which memorized the answers.</p>
+    <p>molecular design agents choose interventions by scoring predicted outcomes, which requires the scorer to distinguish the available actions. this joint report tests that requirement with 78 COSMIC mutational processes as actions and distance in ESM-2 space as the score, then turns the same discipline on the proxy, benchmark, and verifier a design agent delegates to.</p>
+    <p>median pairwise distance falls from 0.815 in COSMIC spectrum space to 0.0068 between ESM-2 outcome regions, a 120x compression, and a composition-matched control reproduces the destinations. a learned policy identifies the true action in 7.55% of held-out cases, split-conformal prediction reaches 92.2% coverage only by returning 66.8 of 78 actions, and an independent Pfam profile HMM finds no PF17041 hits at the curated threshold. a five-category audit battery separates a reproducible embedding effect from the mechanistic claim attached to it, and the agent's parts fail the same way: a zero-shot score ranks below counting, a benchmark correlation stops predicting selection, and a trust gate certifies a scorer that memorized the answers.</p>
   </div>
 
   <div class="stat-row">
     <div class="stat"><div class="n">120&times;</div><div class="l">compression of the action space, 0.815 in COSMIC space to 0.0068 between ESM-2 destinations</div></div>
     <div class="stat"><div class="n">7.55%</div><div class="l">top-1 accuracy of a policy naming the action, against 1.28% chance and 92.45% still wrong</div></div>
-    <div class="stat"><div class="n">five categories</div><div class="l">data, generation, generalization, metric, attribution: the battery a homology-free claim must survive</div></div>
+    <div class="stat"><div class="n">0.991</div><div class="l">gate AUROC of a scorer that memorized the outcomes, against 0.663 for the truthful scorer</div></div>
   </div>
 
-  <div class="why-box">
-    <div class="wb-q">what this report is really about: evaluation taste</div>
-    <p>a useful eval answers four questions, and each part here is built to answer them for a protein-design agent. <b>what it measures</b>: movement in a learned representation, a benchmark correlation, a gate's in-sample AUROC. <b>what it does not measure</b>: biological function, selection value at the sharp top of a ranking, a supplied scorer's implementation. <b>how it can be gamed</b>: a composition-matched direction reproduces the result, a scorer that memorized the outcomes clears the gate, a single-residue search drives the metric 5 s.d. past natural proteins. <b>and when it should change a decision</b>: only after matched controls and an independent check survive, and when they do not, the honest output is a wider uncertainty set or an abstention, not a named mechanism. the point throughout is that a number read inside the thing being optimized is not evidence about the world until it is shown to be robust to exactly these moves.</p>
-  </div>
+  <table class="auditab">
+    <thead><tr><th>a useful eval answers</th><th>in this report</th></tr></thead>
+    <tbody>
+      <tr><td>what it measures</td><td>movement in a learned representation, a benchmark correlation, a gate's in-sample AUROC</td></tr>
+      <tr><td>what it does not measure</td><td>biological function, selection value at the top of a ranking, a supplied scorer's implementation</td></tr>
+      <tr><td>how it can be gamed</td><td>a composition-matched direction, a memorizing scorer, a single-residue metric exploit at 5 s.d.</td></tr>
+      <tr><td>when it should change a decision</td><td>only after matched controls and an independent check survive; otherwise widen the set or abstain</td></tr>
+    </tbody>
+  </table>
 
   <p class="pp-part">Part I &middot; Action identifiability</p>
 
   <section class="pp-thread" id="requirement">
-    <h3 class="pp-thread-title">the requirement nobody checks</h3>
+    <h3 class="pp-thread-title">a scorer can only choose between actions it keeps apart</h3>
     <p><span class="venue-badge">MoML 2026 (MIT)</span><span class="venue-badge">AgenticLS @ NeurIPS 2026</span></p>
 
-    <p>a closed-loop molecular agent proposes an intervention, scores the resulting molecule, and uses the score to choose what to do next. this searches large spaces efficiently, but only if the scorer resolves the actions available to the policy. if several interventions produce indistinguishable scored outcomes, the agent cannot infer which intervention caused a result, and any mechanism it reports afterwards is a guess wearing the clothes of an inference.</p>
+    <p>a closed-loop molecular agent proposes an intervention, scores the resulting molecule, and uses the score to choose what to do next. this searches large spaces efficiently, but only if the scorer resolves the actions available to the policy. if several interventions produce indistinguishable scored outcomes, the agent cannot infer which intervention caused a result, and any mechanism it reports afterwards is unidentified.</p>
 
     <div class="concept-card">
       <span class="cc-term">action identifiability</span>
@@ -127,7 +133,7 @@
       <figcaption><strong>figure 1. distinct processes reach the same place.</strong> left, enacting each process moves held-out proteins toward its own outcome region, but SBS1 (clock-like), SBS7a (UV) and SBS2 (APOBEC) overlap while SBS17a sits farther out. right, the same in pairwise destination distance. SBS2 and SBS1 are near-orthogonal in COSMIC space at cosine 0.02 and still merge after scoring, so the representation is collapsing a distinction the catalogue makes.</figcaption>
     </figure>
 
-    <div class="finding"><div class="fn-label">Finding 1</div><p>biological grounding does not guarantee scorer-level identifiability. 78 biologically distinct COSMIC processes compress 120x in ESM-2 space, a composition-matched control reproduces the destinations to within 0.02, and the effective action space is far coarser than the nominal one.</p></div>
+    <div class="finding"><div class="fn-label">Finding 1</div><p>biological grounding does not guarantee scorer-level identifiability: the effective action space is far coarser than the nominal one.</p></div>
   </section>
 
   <section class="pp-thread" id="controls">
@@ -142,7 +148,7 @@
       <figcaption><strong>figure 2. matched controls and matched compute.</strong> (a) each point is one paired seed; bars are means. the structured arm does not outperform composition-matched mutation, while both beat edit-count-matched random. (b) under equal scorer-call budgets, five-action adaptive lookahead stays farther from the target than fixed or random selection across 60 trajectories per budget.</figcaption>
     </figure>
 
-    <div class="finding"><div class="fn-label">Finding 2</div><p>every matched control removes a result that would otherwise be reported. composition matching erases the structured action's gain (paired difference &minus;0.0027), unselected drift matches selection, and adaptive lookahead is worse than fixed by +0.0113. agency does not overcome a scorer that has already thrown the distinction away.</p></div>
+    <div class="finding"><div class="fn-label">Finding 2</div><p>every matched control removes a result that would otherwise be reported, and agency does not overcome a scorer that has already discarded the distinction.</p></div>
   </section>
 
   <section class="pp-thread" id="policy">
@@ -150,21 +156,21 @@
 
     <p>a supervised policy trained on 35,403 realized Pfam-domain transitions to predict which of the 78 signatures produced a given transition reaches 7.55% top-1 accuracy on a protein-grouped split, against 6.12% for a nearest-neighbor baseline and 1.28% for uniform chance, an edge of +0.93 points over a train-only frequency lookup (95% CI [+0.71, +1.27]). so the policy carries real information and still predicts the wrong action in 92.45% of held-out cases. holding out complete processes drops top-1 to 0.8%, below the 1.3% baseline, and holding out SBS17a yields 0% recovery.</p>
 
-    <p>uncertainty-aware interfaces do not recover a specific useful action. adaptive prediction sets reach 92.2% coverage but return 66.8 of 78 actions on average, with a median set size of 78, the entire catalogue; a direct ESM-2 neighborhood reaches 82.6% coverage at mean set size 58.2. this is what a non-identifiable action space looks like from the inside: the uncertainty quantification is correctly reporting that the evidence does not single out an action.</p>
+    <p>uncertainty-aware interfaces do not recover a specific useful action. adaptive prediction sets reach 92.2% coverage but return 66.8 of 78 actions on average, with a median set size of 78, the entire catalogue; a direct ESM-2 neighborhood reaches 82.6% coverage at mean set size 58.2. the uncertainty quantification is not malfunctioning; it reports that the evidence does not single out an action.</p>
 
     <figure class="pp-fig">
       <img src="static/images/action_uncertainty.png" alt="Two panels. Left, mean returned set size against true-action coverage for ESM-2 neighborhood and adaptive prediction sets, both rising steeply. Right, conditional accuracy against the fraction of cases acted on under validation-frozen abstention thresholds.">
       <figcaption><strong>figure 3. uncertainty-aware interfaces do not recover a specific action.</strong> (a) direct ESM-2 neighborhoods and adaptive prediction sets raise coverage only by returning much of the 78-action catalogue; the dashed line marks 90%. (b) validation-frozen abstention improves conditional accuracy only by acting on fewer cases.</figcaption>
     </figure>
 
-    <p>the representation is not empty, and it is worth being precise. a probe that reads an ESM-2 displacement and names which of five processes produced it reaches 66% five-way accuracy against 20% chance, and 89% on SBS17a. the structure of its errors is the finding: SBS1 is confused with SBS2 even though their COSMIC spectra are near-orthogonal at cosine 0.02. the representation decodes a real signal and still merges processes the catalogue separates. decoding is not identifiability.</p>
+    <p>the representation still carries a signal. a probe that reads an ESM-2 displacement and names which of five processes produced it reaches 66% five-way accuracy against 20% chance, and 89% on SBS17a. its errors follow substitution composition: SBS1 is confused with SBS2 even though their COSMIC spectra are near-orthogonal at cosine 0.02. the representation decodes a real signal and still merges processes the catalogue separates. decoding is not identifiability.</p>
 
     <figure class="pp-fig">
       <img src="static/images/identifiability-decoding.png" alt="Confusion matrix for a probe decoding which of five mutational processes produced an ESM-2 displacement, showing 66 percent five-way accuracy with off-diagonal confusions following substitution composition.">
       <figcaption><strong>figure 4. decoding is not identifiability.</strong> a probe naming which of five processes produced a displacement reaches 66% against 20% chance, so the representation carries signal. the off-diagonal is the point: the confusions follow substitution composition rather than the catalogue's own structure.</figcaption>
     </figure>
 
-    <div class="finding"><div class="fn-label">Finding 3</div><p>the policy names the right action 7.55% of the time and set-valued prediction buys 92.2% coverage only by returning most of the catalogue. a probe decodes five processes at 66%, so the representation carries a real signal while still merging processes the catalogue keeps apart.</p></div>
+    <div class="finding"><div class="fn-label">Finding 3</div><p>the policy carries a real signal yet cannot name a specific action, and set-valued prediction buys coverage only by returning most of the catalogue.</p></div>
   </section>
 
   <section class="pp-thread" id="objective">
@@ -174,7 +180,7 @@
 
     <p>the objective is also exploitable. an agent making unconstrained single-residue edits drives cosine distance to the centroid from 0.26 to 0.009 over 200 edits, landing 5.0 standard deviations below the natural-protein reference mean of 0.194 &plusmn; 0.037 across 25 measured proteins, while ESM-2 naturalness falls alongside it from &minus;0.41 to &minus;0.50. the plausibility signal detects the departure, but because both the objective and that self-check live in ESM-2, passing a check in the same representation is not independent evidence.</p>
 
-    <div class="finding"><div class="fn-label">Finding 4</div><p>movement under the ESM-2 objective is not acquisition of PF17041-like properties. an independent profile HMM finds zero hits, and the objective is exploitable to 5.0 s.d. below natural proteins, so a check that shares the objective's representation cannot validate it.</p></div>
+    <div class="finding"><div class="fn-label">Finding 4</div><p>movement under the ESM-2 objective is not acquisition of PF17041-like properties, and a check that shares the objective's representation cannot validate it.</p></div>
   </section>
 
   <p class="pp-part">Part II &middot; The audit battery, five failure modes</p>
@@ -198,7 +204,7 @@
 
     <p>length correction reduces the SBS17a to PF17041 enrichment from 60.7x to 18.7x while preserving its trajectory rank, #1 of 78. a composition-matched direction has cosine 0.86 &plusmn; 0.05 with the SBS17a direction and reproduces 72% of its displacement toward the PF17041 centroid. because the direction and the centroid occupy the same ESM-2 space, the centroid is not independent biological validation. the evidence supports a reproducible, composition-associated property of ESM-2 geometry, not SBS17a as a biological driver of PF17041 function.</p>
 
-    <div class="finding"><div class="fn-label">Finding 5</div><p>the five audit categories separate a reproducible embedding effect from the mechanistic claim attached to it. the same battery applies whenever a learned metric replaces an external reference: verify the data, perturb the generator, hold out complete mechanisms, test identifiability, optimize the metric directly, and report the strongest matched control.</p></div>
+    <div class="finding"><div class="fn-label">Finding 5</div><p>the five audit categories separate a reproducible embedding effect from the mechanistic claim attached to it, and the battery applies wherever a learned metric replaces an external reference.</p></div>
   </section>
 
   <p class="pp-part">Part III &middot; Evaluating biological agents</p>
@@ -213,7 +219,7 @@
 
     <figure class="pp-fig">
       <img src="https://saanviiyer.github.io/assets/images/projects/eval/gauntlet-proxy-audit.png" alt="Within-study rank correlation for four scorers on PET-hydrolytic activity and melting temperature; the ESM-2 zero-shot score sits near zero on activity, below a mutation count.">
-      <figcaption><strong>figure 5. a score that cannot beat counting.</strong> within-study rank correlation with measured outcomes for four scorers. the ESM-2 650M zero-shot score sits near zero on activity, below a mutation count at 0.25. the comparison is within study, so it is not confounded by between-study offsets.</figcaption>
+      <figcaption><strong>figure 5. a score that cannot beat counting.</strong> within-study rank correlation with measured outcomes for four scorers, on PET-hydrolytic activity (504 variants, 25 studies) and melting temperature (376 variants, 15 studies). within study, so it is not confounded by between-study offsets.</figcaption>
     </figure>
 
     <p><strong>benchmark correlation stops predicting where campaigns act.</strong> across 70 benchmark units in four corpora, reported correlation explains half the variance in top-10% selection value and 16% at top-1%; three of 41 ProteinGym assays give worse-than-random top-1% selections despite positive reported correlations. the same correlation means different things across families: at matched correlation, SSMuLA libraries deliver +0.265 more top-1% value than ProteinGym (p = 0.0001), so a leaderboard scalar is not comparable across family mixtures.</p>
@@ -230,7 +236,7 @@
       <figcaption><strong>figure 7. the gate rewards the wrong signal.</strong> left, the gate's score rises with leakage. center, only the truthful scorer helps. right, forward validation holds the truthful scorer's value while pushing the leaked scorers to chance, the defense that works, though it cannot see the pool-side attack.</figcaption>
     </figure>
 
-    <div class="finding"><div class="fn-label">Finding 6</div><p>the three parts an agent delegates to fail where it uses them: a zero-shot proxy ranks below counting, benchmark correlation stops predicting selection and means different things across families, and an in-sample trust gate certifies a scorer that memorized the answers at AUROC 0.991. a static number is not the quantity an optimizer pushes on.</p></div>
+    <div class="finding"><div class="fn-label">Finding 6</div><p>the proxy, benchmark, and verifier each fail where the agent uses them, because a static number is not the quantity an optimizer pushes on.</p></div>
   </section>
 
   <p class="pp-section-num" id="takeaways">Takeaways</p>
@@ -244,7 +250,7 @@
     <div class="takeaway"><div class="tk-h">an eval earns the decision</div>a result should move a model or a campaign only after matched controls and an independent check survive; until then the honest output is a wider uncertainty set or abstention, not a mechanism.</div>
   </div>
 
-  <p class="pp-section-num">a three-step evaluation worth making standard</p>
+  <p class="pp-section-num">a three-step evaluation</p>
   <ol class="howto">
     <li><span class="ht-name">measure whether the scorer distinguishes the actions available to the policy.</span><span class="ht-one">compare distances in the action's own parameterization against distances between scored outcomes.</span> cheap, and diagnostic.</li>
     <li><span class="ht-name">compare optimization against matched controls.</span><span class="ht-one">match proposal distribution, edit count, sequence length, and scorer-call budget.</span> each matched control here removed a result that would otherwise have been reported.</li>
