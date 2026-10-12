@@ -35,6 +35,14 @@
   .aid table.auditab th { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.02em; color: var(--red); }
   .aid table.auditab td:first-child { font-weight: 600; }
   @media (max-width: 620px) { .aid table.auditab, .aid table.auditab thead, .aid table.auditab tbody, .aid table.auditab tr, .aid table.auditab th, .aid table.auditab td { display: block; } .aid table.auditab thead { display: none; } .aid table.auditab td { border-bottom: none; padding: 2px 0; } .aid table.auditab tr { padding: 12px 0; border-bottom: 0.5px solid var(--border); } .aid table.auditab td:first-child { color: var(--red); margin-bottom: 2px; } }
+  .aid-anim .aid-canvas-wrap { width: 100%; aspect-ratio: 16 / 7.5; background: var(--read-card, #fffdf7); border: 1px solid var(--read-card-edge, #efe7d7); border-radius: 12px; }
+  .aid-anim .aid-canvas-wrap canvas { width: 100%; height: 100%; display: block; }
+  .aid-anim .aid-space-labels { display: flex; justify-content: space-between; font-family: var(--sans); font-size: 0.74rem; color: var(--muted); margin: 8px 2px 0; }
+  .aid-anim .aid-controls { display: flex; align-items: center; gap: 14px; margin-top: 10px; font-family: var(--sans); font-size: 0.82rem; color: var(--muted); flex-wrap: wrap; }
+  .aid-anim .aid-controls button { font-family: var(--sans); font-size: 0.76rem; border: 1px solid var(--pink); color: var(--pink); background: transparent; border-radius: 999px; padding: 4px 15px; cursor: pointer; }
+  .aid-anim .aid-controls button:hover { background: rgba(207,77,135,0.08); }
+  .aid-anim .aid-controls input[type=range] { flex: 1; min-width: 150px; accent-color: var(--red); }
+  .aid-anim .aid-readout b { color: var(--red); }
 </style>
 </head>
 <body>
@@ -127,6 +135,17 @@
     <p>Across all 3,003 pairs of COSMIC signatures, the median distance between native 96-channel spectra is 0.815; between the same actions' ESM-2 outcome regions it is 0.0068. The scored action space is roughly two orders of magnitude tighter than the space the actions actually live in. 1,780 of 3,003 pairs are more than 0.5 apart in COSMIC space yet fall within 0.011 of each other after scoring. SBS1 and SBS7a, clock-like ageing and UV exposure, are 0.952 apart as spectra and 0.0055 apart as outcomes.</p>
 
     <p>A composition-matched control pins down why. Scrambling trinucleotide context and mutation placement while preserving the realized substitution composition reproduces each action's ESM-2 destination to within cosine distance 0.02, and the same pattern appears at both ESM-2 8M and 650M. The agent has 78 nominal actions and a far coarser effective action space underneath.</p>
+
+    <figure class="pp-fig aid-anim">
+      <div class="aid-canvas-wrap"><canvas id="aid-compress"></canvas></div>
+      <div class="aid-space-labels"><span>COSMIC spectrum space</span><span>ESM-2 outcome space</span></div>
+      <div class="aid-controls">
+        <button id="aid-play" type="button">pause</button>
+        <input id="aid-slider" type="range" min="0" max="100" value="0" aria-label="Scrub from COSMIC space to ESM-2 space">
+        <span class="aid-readout">median pairwise distance <b id="aid-med">0.815</b></span>
+      </div>
+      <figcaption><strong>Interactive. The scorer compresses the action space.</strong> Scrub from the 78 mutational actions as they sit in COSMIC spectrum space, spread apart, to where their outcomes land after ESM-2 scoring, one tight region. Median pairwise distance falls from 0.815 to 0.0068, a 120x compression, and SBS1 and SBS7a, far apart as processes, land almost on top of each other. Point positions are schematic; the collapse magnitude is the measured 120x.</figcaption>
+    </figure>
 
     <figure class="pp-fig">
       <img src="static/images/identifiability-signatures.png" alt="Left, a steering cross-matrix showing each mutational process moves held-out proteins toward its own outcome region, with SBS1, SBS7a and SBS2 overlapping and SBS17a farther out. Right, the same pattern in pairwise destination distance.">
@@ -358,5 +377,59 @@
   })();
 </script>
 
+<script>
+(function () {
+  var cv = document.getElementById('aid-compress');
+  if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  var DPR = Math.min(2, window.devicePixelRatio || 1);
+  function css(v, f) { try { var c = getComputedStyle(document.documentElement).getPropertyValue(v).trim(); return c || f; } catch (e) { return f; } }
+  var N = 78, pts = [], seed = 20260101;
+  function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+  for (var i = 0; i < N; i++) {
+    var a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 0.92;
+    pts.push({ cx: Math.cos(a) * r, cy: Math.sin(a) * r, ex: (rnd() - 0.5) * 0.14, ey: (rnd() - 0.5) * 0.14, name: null });
+  }
+  pts[0].name = 'SBS1'; pts[0].cx = -0.72; pts[0].cy = -0.28; pts[0].ex = 0.015; pts[0].ey = 0.01;
+  pts[1].name = 'SBS7a'; pts[1].cx = 0.74; pts[1].cy = 0.34; pts[1].ex = -0.02; pts[1].ey = -0.015;
+  var t = 0, playing = true, dir = 1;
+  var slider = document.getElementById('aid-slider');
+  var btn = document.getElementById('aid-play');
+  var med = document.getElementById('aid-med');
+  function resize() { var w = cv.clientWidth, h = cv.clientHeight; cv.width = Math.max(1, w * DPR); cv.height = Math.max(1, h * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); }
+  function draw() {
+    var w = cv.clientWidth, h = cv.clientHeight; ctx.clearRect(0, 0, w, h);
+    var cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.42;
+    var e = t * t * (3 - 2 * t);
+    var pink = css('--pink', '#cf4d87'), red = css('--red', '#a8324a');
+    for (var i = 0; i < pts.length; i++) {
+      var p = pts[i];
+      p._x = cx + (p.cx * (1 - e) + p.ex * e) * R;
+      p._y = cy + (p.cy * (1 - e) + p.ey * e) * R;
+    }
+    for (var j = 0; j < pts.length; j++) {
+      var q = pts[j];
+      if (q.name) continue;
+      ctx.beginPath(); ctx.arc(q._x, q._y, 3, 0, 7); ctx.fillStyle = 'rgba(207,77,135,0.5)'; ctx.fill();
+    }
+    ctx.font = '600 12px Inter, system-ui, sans-serif';
+    for (var k = 0; k < 2; k++) {
+      var hp = pts[k];
+      ctx.beginPath(); ctx.arc(hp._x, hp._y, 5, 0, 7); ctx.fillStyle = red; ctx.fill();
+      ctx.fillStyle = '#6f685c';
+      var tx = hp.name === 'SBS1' ? hp._x - ctx.measureText(hp.name).width - 9 : hp._x + 9;
+      ctx.fillText(hp.name, tx, hp._y + 4);
+    }
+    var m = (0.815 * (1 - e) + 0.0068 * e);
+    if (med) med.textContent = m.toFixed(e > 0.45 ? 4 : 3);
+    if (slider && document.activeElement !== slider) slider.value = String(Math.round(t * 100));
+  }
+  function loop() { if (playing) { t += 0.005 * dir; if (t >= 1) { t = 1; dir = -1; } if (t <= 0) { t = 0; dir = 1; } } draw(); requestAnimationFrame(loop); }
+  if (slider) slider.addEventListener('input', function () { playing = false; if (btn) btn.textContent = 'play'; t = slider.value / 100; });
+  if (btn) btn.addEventListener('click', function () { playing = !playing; btn.textContent = playing ? 'pause' : 'play'; });
+  window.addEventListener('resize', resize);
+  resize(); loop();
+})();
+</script>
 </body>
 </html>
